@@ -5,7 +5,7 @@ extends CharacterBody3D
 @onready var camera: Camera3D = %Camera3D
 var current_dir_idx: int = -1
 var current_action : String = "idle"
-const speed = 12.0
+const speed = 8.0
 
 var facing : float = 0.0
 
@@ -38,13 +38,13 @@ func set_animation(action: String, rot: float) -> void:
 	# Eight directions in order, starting at 0° = "right" and going CCW
 	var dirs := [
 		"right",
-		"down_right",
-		"up",
-		"down_left",
-		"left",
-		"up_left",
-		"down",
 		"up_right",
+		"up",
+		"up_left",
+		"left",
+		"down_left",
+		"down",
+		"down_right",
 	]
 	var idx := int((degrees + 22.5) / 45.0) % 8
 	
@@ -61,7 +61,7 @@ func _physics_process(delta: float) -> void:
 	if input_dir.length() > 0.1:
 		var facing_rot := atan2(input_dir.y, input_dir.x)
 		facing = facing_rot
-		set_animation("walk", facing_rot)
+		set_animation("idle", facing_rot)
 	else:
 		set_animation("idle", facing)
 	
