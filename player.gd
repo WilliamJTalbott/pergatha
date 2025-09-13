@@ -3,8 +3,11 @@ extends CharacterBody3D
 # References to camera nodes (use % for unique names if set in the editor)
 @onready var camera_pivot: Node3D = %"Camera Pivot"
 @onready var camera: Camera3D = %Camera3D
+var current_dir_idx: int = -1
+var current_action : String = "idle"
+const speed = 12.0
 
-const speed = 5.0
+var facing : float = 0.0
 
 # Mouse sensitivity and limits (tweak these in the inspector)
 @export_range(0.0, 1.0) var mouse_sensitivity: float = 0.002  # Adjust for feel (e.g., 0.002 for smooth)
@@ -29,9 +32,38 @@ func _input(event: InputEvent) -> void:
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 			
+func set_animation(action: String, rot: float) -> void:
+	# Convert angle to degrees and wrap into [0,360)
+	var degrees := fmod(rad_to_deg(rot) + 360.0, 360.0)
+	# Eight directions in order, starting at 0° = "right" and going CCW
+	var dirs := [
+		"right",
+		"down_right",
+		"up",
+		"down_left",
+		"left",
+		"up_left",
+		"down",
+		"up_right",
+	]
+	var idx := int((degrees + 22.5) / 45.0) % 8
+	
+	# Only update if direction changed.
+	if idx != current_dir_idx or action != current_action:
+		current_dir_idx = idx
+		current_action = action
+		var suffix : String = "_" + dirs[idx]
+		%Sprite3D.play(action + suffix)
+			
 func _physics_process(delta: float) -> void:
 	# Get input direction: x = left/right, y = forward/back
 	var input_dir = Input.get_vector("move_left", "move_right", "move_down", "move_up")
+	if input_dir.length() > 0.1:
+		var facing_rot := atan2(input_dir.y, input_dir.x)
+		facing = facing_rot
+		set_animation("walk", facing_rot)
+	else:
+		set_animation("idle", facing)
 	
 	if input_dir == Vector2.ZERO:
 		velocity.x = move_toward(velocity.x, 0, speed)  # Optional: Decelerate when no input
