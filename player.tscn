@@ -1,7 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://cfnruchq4dbhr"]
+[gd_scene load_steps=21 format=3 uid="uid://cfnruchq4dbhr"]
 
 [ext_resource type="Script" uid="uid://vvisvekstx2t" path="res://player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://b4foe8ij02qu7" path="res://Sprite-0002.png" id="2_onrkg"]
+[ext_resource type="Texture2D" uid="uid://dywr1kcyj4485" path="res://this.png" id="3_hqtel"]
+[ext_resource type="Texture2D" uid="uid://blqk5jcj24726" path="res://rain.png" id="3_i3pqv"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hqtel"]
 
@@ -104,6 +106,57 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hqtel"]
+emission_shape_scale = Vector3(20, 20, 20)
+emission_shape = 6
+emission_ring_axis = Vector3(0, 90, 1)
+emission_ring_height = 2.0
+emission_ring_radius = 3.0
+emission_ring_inner_radius = 1.5
+emission_ring_cone_angle = 90.0
+gravity = Vector3(0, -30, 0)
+collision_mode = 2
+sub_emitter_mode = 3
+sub_emitter_amount_at_collision = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sweqy"]
+transparency = 1
+cull_mode = 2
+depth_draw_mode = 2
+shading_mode = 0
+albedo_texture = ExtResource("3_hqtel")
+texture_filter = 0
+billboard_mode = 2
+
+[sub_resource type="QuadMesh" id="QuadMesh_2hs0m"]
+material = SubResource("StandardMaterial3D_sweqy")
+size = Vector2(7.5, 15)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_2hs0m"]
+emission_shape_scale = Vector3(20, 20, 20)
+emission_shape = 6
+emission_ring_axis = Vector3(0, 90, 1)
+emission_ring_height = 2.0
+emission_ring_radius = 1.5
+emission_ring_inner_radius = 0.0
+emission_ring_cone_angle = 90.0
+gravity = Vector3(0, -30, 0)
+collision_mode = 2
+sub_emitter_mode = 3
+sub_emitter_amount_at_collision = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1jxqw"]
+transparency = 1
+cull_mode = 2
+depth_draw_mode = 2
+shading_mode = 0
+albedo_texture = ExtResource("3_i3pqv")
+texture_filter = 0
+billboard_mode = 2
+
+[sub_resource type="QuadMesh" id="QuadMesh_dw050"]
+material = SubResource("StandardMaterial3D_1jxqw")
+
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_onrkg")
 
@@ -116,7 +169,7 @@ unique_name_in_owner = true
 centered = false
 offset = Vector2(-32, -16)
 pixel_size = 0.05
-billboard = 2
+billboard = 1
 shaded = true
 alpha_cut = 1
 texture_filter = 0
@@ -130,5 +183,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Camera Pivot"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 7.5, 15)
+transform = Transform3D(1, 0, 0, 0, 0.819152, 0.573576, 0, -0.573576, 0.819152, 0, 6, 10)
 fov = 70.0
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 200
+speed_scale = 1.25
+randomness = 0.3
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_hqtel")
+draw_pass_1 = SubResource("QuadMesh_2hs0m")
+
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="."]
+amount = 500
+speed_scale = 1.25
+randomness = 0.3
+process_material = SubResource("ParticleProcessMaterial_2hs0m")
+draw_pass_1 = SubResource("QuadMesh_dw050")
